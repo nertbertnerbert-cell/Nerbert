@@ -803,7 +803,7 @@ const form=new FormData();
 
 form.append("song",file);
 
-await fetch("/upload",{
+await fetch("http://10.184.232.166:3000/upload",{
 method:"POST",
 body:form
 });
