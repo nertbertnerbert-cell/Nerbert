@@ -26,14 +26,21 @@ jobs:
 
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
+        run: |
+          set +e
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
+          RESULT=${PIPESTATUS[0]}
+          echo "Gradle exit code: $RESULT"
+          echo "=== APK SEARCH ==="
+          find . -type f -name "*.apk" -print
+          exit $RESULT
 
       - name: Upload APK
         if: success()
         uses: actions/upload-artifact@v6
         with:
           name: nerbert-music-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/**/*.apk
 
       - name: Upload build log
         if: always()
