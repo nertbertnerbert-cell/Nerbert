@@ -110,6 +110,17 @@ app.post("/upload-video", uploadVideo.single("video"), (req, res) => {
   });
 });
 
+app.get("/download/:file", (req, res) => {
+  const file = path.basename(req.params.file);
+  const filePath = path.join(musicDir, file);
+
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ error: "Song not found" });
+  }
+
+  res.download(filePath, file);
+});
+
 app.use("/music", express.static(musicDir));
 app.use("/videos", express.static(videoDir));
 

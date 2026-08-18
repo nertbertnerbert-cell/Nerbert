@@ -630,6 +630,31 @@ heart.onclick = (event) => {
 
 row.appendChild(heart);
 
+
+const listen = document.createElement("button");
+listen.textContent = "🎧";
+listen.title = "Listen online";
+listen.onclick = (event) => {
+  event.stopPropagation();
+  audio.src = "http://10.184.232.166:3000" + song.url;
+  audio.play();
+};
+
+const download = document.createElement("button");
+download.textContent = "⬇️";
+download.title = "Download";
+download.onclick = (event) => {
+  event.stopPropagation();
+  const link = document.createElement("a");
+  link.href = "http://10.184.232.166:3000/download/" + encodeURIComponent(song.name);
+  link.download = song.name;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+};
+
+row.appendChild(listen);
+row.appendChild(download);
 songsBox.appendChild(row);
 
 });
