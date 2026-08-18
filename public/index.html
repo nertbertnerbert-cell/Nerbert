@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Nerbert Music</title>
+
+<style>
+
+*{
+box-sizing:border-box
+}
+
+body{
+margin:0;
+background:#080808;
+color:#fff;
+font-family:Arial,sans-serif
+}
+
+header{
+padding:22px 18px 12px;
+text-align:center
+}
+
+header h1{
+margin:0;
+font-size:26px;
+letter-spacing:3px
+}
+
+header p{
+color:#888;
+margin:7px
+}
+
+.tabs{
+display:flex;
+width:94%;
+max-width:520px;
+margin:10px auto;
+background:#151515;
+border-radius:15px;
+padding:5px
+}
+
+.tab{
+flex:1;
+border:0;
+background:transparent;
+color:#888;
+padding:13px;
+border-radius:11px;
+font-size:15px
+}
+
+.tab.active{
+background:#292929;
+color:#fff
+}
+
+.section{
+display:none
+}
+
+.section.active{
+display:block
+}
+
+.player{
+width:94%;
+max-width:520px;
+margin:15px auto;
+padding:22px;
+background:#151515;
+border-radius:25px;
+text-align:center
+}
+
+.art{
+width:210px;
+height:210px;
+margin:auto;
+border-radius:22px;
+background:linear-gradient(145deg,#292929,#080808);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:75px
+}
+
+#title{
+margin:20px 0 5px;
+font-size:19px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis
+}
+
+#time{
+color:#888;
+font-size:13px
+}
+
+input[type=range]{
+width:100%;
+accent-color:white
+}
+
+.controls{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:12px;
+margin:12px 0
+}
+
+button{
+border:0;
+background:#252525;
+color:white;
+width:48px;
+height:48px;
+border-radius:50%;
+font-size:18px
+}
+
+#play{
+width:64px;
+height:64px;
+font-size:25px
+}
+
+.small-controls{
+display:flex;
+justify-content:center;
+gap:10px;
+margin-top:10px
+}
+
+.small-controls button{
+width:auto;
+height:38px;
+padding:0 15px;
+border-radius:20px;
+font-size:13px
+}
+
+.library{
+width:94%;
+max-width:520px;
+margin:25px auto 40px
+}
+
+.library h2{
+font-size:18px
+}
+
+.song{
+display:flex;
+align-items:center;
+gap:12px;
+padding:13px;
+margin:8px 0;
+background:#151515;
+border-radius:14px
+}
+
+.song button{
+width:42px;
+height:42px;
+flex-shrink:0
+}
+
+.name{
+overflow:hidden;
+white-space:nowrap;
+text-overflow:ellipsis
+}
+
+.upload{
+text-align:center;
+margin-bottom:40px
+}
+
+.upload label{
+display:inline-block;
+padding:13px 20px;
+background:#252525;
+border-radius:20px;
+margin:5px
+}
+
+input[type=file]{
+display:none
+}
+
+.video-list{
+width:94%;
+max-width:520px;
+margin:20px auto 40px
+}
+
+.video-card{
+background:#151515;
+border-radius:18px;
+overflow:hidden;
+margin-bottom:15px
+}
+
+.video-card video{
+width:100%;
+display:block;
+background:#000;
+max-height:300px
+}
+
+.video-info{
+padding:13px
+}
+
+.video-name{
+font-size:15px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis
+}
+
+
+.video-player{
+width:94%;
+max-width:720px;
+margin:15px auto;
+background:#111;
+border-radius:22px;
+padding:10px;
+overflow:hidden
+}
+
+#mainVideo{
+width:100%;
+max-height:70vh;
+display:none;
+background:#000;
+border-radius:16px
+}
+
+.video-empty{
+height:230px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+color:#777;
+font-size:55px
+}
+
+.video-empty p{
+font-size:14px;
+margin:8px
+}
+
+.video-controls{
+display:flex;
+justify-content:center;
+gap:8px;
+padding:12px 4px
+}
+
+.video-controls button{
+width:auto;
+height:40px;
+min-width:45px;
+padding:0 12px;
+border-radius:20px
+}
+
+#videoTitle{
+padding:5px 8px 10px;
+font-size:15px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis
+}
+
+.video-card{
+cursor:pointer;
+transition:transform .15s
+}
+
+.video-card:active{
+transform:scale(.98)
+}
+
+
+.search-box{
+width:94%;
+max-width:520px;
+margin:10px auto 15px
+}
+
+.search-box input{
+width:100%;
+padding:14px 17px;
+border:0;
+outline:0;
+border-radius:18px;
+background:#181818;
+color:#fff;
+font-size:15px
+}
+
+.search-box input::placeholder{
+color:#777
+}
+
+
+.favorites-bar{
+width:94%;
+max-width:520px;
+margin:8px auto;
+text-align:right
+}
+
+#favoritesToggle{
+width:auto;
+height:38px;
+padding:0 16px;
+border-radius:20px;
+font-size:13px
+}
+
+.favorite{
+margin-left:auto;
+width:38px;
+height:38px;
+font-size:18px
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>NERBERT MUSIC</h1>
+<p>Offline Media Player</p>
+
+</header>
+
+
+<div class="search-box">
+<input
+  id="searchInput"
+  type="search"
+  placeholder="🔍 Search music and videos..."
+  autocomplete="off">
+</div>
+
+
+<div class="favorites-bar">
+<button id="favoritesToggle">❤️ Favorites</button>
+</div>
+
+
+<div class="favorites-bar">
+<button id="recentToggle">🕘 Recently Played</button>
+</div>
+
+<div class="tabs">
+
+<button class="tab active" onclick="showSection('musicSection',this)">
+🎵 Music
+</button>
+
+<button class="tab" onclick="showSection('videoSection',this)">
+🎬 Videos
+</button>
+
+</div>
+
+<!-- MUSIC -->
+
+<section id="musicSection" class="section active">
+
+<div class="player">
+
+<div class="art">🎵</div>
+
+<div id="title">Nothing playing</div>
+
+<div id="time">0:00 / 0:00</div>
+
+<input id="progress" type="range" min="0" max="100" value="0">
+
+<div class="controls">
+
+<button id="prev">⏮</button>
+<button id="play">▶</button>
+<button id="next">⏭</button>
+
+</div>
+
+<div class="small-controls">
+
+<button id="shuffle">🔀 Shuffle</button>
+<button id="repeat">🔁 Repeat</button>
+
+</div>
+
+<input id="volume" type="range" min="0" max="1" step=".01" value="1">
+
+<audio id="audio"></audio>
+
+</div>
+
+<div class="library">
+
+<h2>🎵 Your Music</h2>
+
+<div id="songs">
+Loading music...
+</div>
+
+</div>
+
+<div class="upload">
+
+<label for="file">
+＋ Add Music
+</label>
+
+<input id="file" type="file" accept="audio/*" multiple>
+
+</div>
+
+</section>
+
+<!-- VIDEO -->
+
+<section id="videoSection" class="section">
+
+<div class="video-player">
+
+<div id="videoEmpty" class="video-empty">
+🎬
+<p>Select a video from your library</p>
+</div>
+
+<video id="mainVideo"
+       controls
+       playsinline
+       preload="metadata"></video>
+
+<div class="video-controls">
+
+<button id="videoPlay">▶</button>
+
+<button id="videoBack">↶ 10</button>
+
+<button id="videoForward">10 ↷</button>
+
+<button id="videoFullscreen">⛶</button>
+
+</div>
+
+<div id="videoTitle">Nothing playing</div>
+
+</div>
+
+<div class="video-list">
+
+<h2>🎬 Your Videos</h2>
+
+<div id="videos">
+Loading videos...
+</div>
+
+</div>
+
+<div class="upload">
+
+<label for="videoFile">
+＋ Add Video
+</label>
+
+<input id="videoFile"
+       type="file"
+       accept="video/*"
+       multiple>
+
+</div>
+
+</section>
+
+<script>
+
+/* =========================
+   SECTION SWITCHING
+========================= */
+
+function showSection(id,button){
+
+document.querySelectorAll(".section")
+.forEach(section=>{
+section.classList.remove("active")
+});
+
+document.querySelectorAll(".tab")
+.forEach(tab=>{
+tab.classList.remove("active")
+});
+
+document.getElementById(id)
+.classList.add("active");
+
+button.classList.add("active");
+
+if(id==="videoSection"){
+loadVideos();
+}
+
+}
+
+/* =========================
+   MUSIC PLAYER
+========================= */
+
+const audio=document.getElementById("audio");
+const play=document.getElementById("play");
+const prev=document.getElementById("prev");
+const next=document.getElementById("next");
+const progress=document.getElementById("progress");
+const volume=document.getElementById("volume");
+const title=document.getElementById("title");
+const time=document.getElementById("time");
+const songsBox=document.getElementById("songs");
+
+let songs=[];
+let index=-1;
+let shuffle=false;
+let repeat=false;
+
+function formatTime(seconds){
+
+if(!isFinite(seconds))return"0:00";
+
+let m=Math.floor(seconds/60);
+let s=Math.floor(seconds%60);
+
+return m+":"+(s<10?"0":"")+s;
+
+}
+
+function cleanName(name){
+
+return name
+.replace(/^\d+-/,"")
+.replace(/\.[^/.]+$/,"")
+.replace(/_/g," ");
+
+}
+
+async function loadSongs(){
+
+try{
+
+const response=await fetch("/songs");
+
+songs=await response.json();
+
+renderSongs();
+
+}catch(error){
+
+songsBox.innerHTML="Unable to load music.";
+
+}
+
+}
+
+function renderSongs(){
+
+songsBox.innerHTML="";
+
+if(!songs.length){
+
+songsBox.innerHTML=
+"<p style='color:#777'>No music found.</p>";
+
+return;
+
+}
+
+songs.forEach((song,i)=>{
+
+const row=document.createElement("div");
+
+row.className="song";
+
+const button=document.createElement("button");
+
+button.textContent=
+i===index&&!audio.paused?"⏸":"▶";
+
+button.onclick=()=>playSong(i);
+
+const name=document.createElement("div");
+
+name.className="name";
+
+name.textContent=cleanName(song.name);
+
+row.appendChild(button);
+row.appendChild(name);
+
+const heart = document.createElement("button");
+heart.className = "favorite";
+
+updateFavoriteButton(heart,"music",song.name);
+
+heart.onclick = (event) => {
+  event.stopPropagation();
+  toggleFavorite("music",song.name);
+};
+
+row.appendChild(heart);
+
+songsBox.appendChild(row);
+
+});
+
+}
+
+function playSong(i){
+
+if(!songs[i])return;
+
+index=i;
+
+audio.src=songs[i].url;
+
+title.textContent=
+cleanName(songs[i].name);
+
+audio.play();
+
+play.textContent="⏸";
+
+renderSongs();
+
+}
+
+play.onclick=()=>{
+
+if(!audio.src){
+
+if(songs.length)playSong(0);
+
+return;
+
+}
+
+if(audio.paused){
+
+audio.play();
+
+play.textContent="⏸";
+
+}else{
+
+audio.pause();
+
+play.textContent="▶";
+
+}
+
+renderSongs();
+
+};
+
+next.onclick=()=>{
+
+if(!songs.length)return;
+
+if(shuffle){
+
+index=Math.floor(
+Math.random()*songs.length
+);
+
+}else{
+
+index++;
+
+if(index>=songs.length)
+index=0;
+
+}
+
+playSong(index);
+
+};
+
+prev.onclick=()=>{
+
+if(!songs.length)return;
+
+index--;
+
+if(index<0)
+index=songs.length-1;
+
+playSong(index);
+
+};
+
+audio.ontimeupdate=()=>{
+
+if(audio.duration){
+
+progress.value=
+(audio.currentTime/audio.duration)*100;
+
+time.textContent=
+formatTime(audio.currentTime)+
+" / "+
+formatTime(audio.duration);
+
+}
+
+};
+
+progress.oninput=()=>{
+
+if(audio.duration){
+
+audio.currentTime=
+(progress.value/100)*
+audio.duration;
+
+}
+
+};
+
+volume.oninput=()=>{
+
+audio.volume=volume.value;
+
+};
+
+audio.onended=()=>{
+
+if(repeat){
+
+audio.currentTime=0;
+audio.play();
+
+}else{
+
+next.click();
+
+}
+
+};
+
+document.getElementById("shuffle")
+.onclick=()=>{
+
+shuffle=!shuffle;
+
+document.getElementById("shuffle")
+.textContent=
+shuffle?
+"🔀 Shuffle ON":
+"🔀 Shuffle";
+
+};
+
+document.getElementById("repeat")
+.onclick=()=>{
+
+repeat=!repeat;
+
+document.getElementById("repeat")
+.textContent=
+repeat?
+"🔁 Repeat ON":
+"🔁 Repeat";
+
+};
+
+document.getElementById("file")
+.onchange=async e=>{
+
+for(const file of e.target.files){
+
+const form=new FormData();
+
+form.append("song",file);
+
+await fetch("/upload",{
+method:"POST",
+body:form
+});
+
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+const searchInput =
+document.getElementById("searchInput");
+
+if(searchInput){
+
+searchInput.addEventListener("input",()=>{
+
+const query =
+searchInput.value
+.toLowerCase()
+.trim();
+
+filterMusic(query);
+filterVideos(query);
+
+});
+
+}
+
+function filterMusic(query){
+
+document
+.querySelectorAll("#songs .song")
+.forEach((row,i)=>{
+
+const text =
+row.textContent.toLowerCase();
+
+row.style.display =
+!query || text.includes(query)
+? ""
+: "none";
+
+});
+
+}
+
+function filterVideos(query){
+
+document
+.querySelectorAll("#videos .video-card")
+.forEach(card=>{
+
+const text =
+card.textContent.toLowerCase();
+
+card.style.display =
+!query || text.includes(query)
+? ""
+: "none";
+
+});
+
+}
+
+
+
+/* =========================
+   FAVORITES
+========================= */
+
+let favorites =
+JSON.parse(localStorage.getItem("nerbertFavorites") || "[]");
+
+let showingFavorites = false;
+
+function isFavorite(type,name){
+
+return favorites.some(item =>
+item.type === type && item.name === name
+);
+
+}
+
+function toggleFavorite(type,name){
+
+const existing =
+favorites.findIndex(item =>
+item.type === type && item.name === name
+);
+
+if(existing >= 0){
+
+favorites.splice(existing,1);
+
+}else{
+
+favorites.push({
+type:type,
+name:name
+});
+
+}
+
+localStorage.setItem(
+"nerbertFavorites",
+JSON.stringify(favorites)
+);
+
+renderSongs();
+
+loadVideos();
+
+}
+
+function updateFavoriteButton(button,type,name){
+
+button.textContent =
+isFavorite(type,name)
+? "❤️"
+: "♡";
+
+}
+
+document
+.getElementById("favoritesToggle")
+.onclick=()=>{
+
+showingFavorites=!showingFavorites;
+
+const button =
+document.getElementById("favoritesToggle");
+
+button.textContent =
+showingFavorites
+? "📚 All Media"
+: "❤️ Favorites";
+
+renderSongs();
+loadVideos();
+
+};
+
+
+
+/* =========================
+   RECENTLY PLAYED
+========================= */
+
+let recentlyPlayed =
+JSON.parse(
+localStorage.getItem("nerbertRecent") || "[]"
+);
+
+let showingRecent = false;
+
+function addRecent(type,item){
+
+recentlyPlayed =
+recentlyPlayed.filter(x =>
+!(x.type === type && x.name === item.name)
+);
+
+recentlyPlayed.unshift({
+type:type,
+name:item.name,
+url:item.url,
+time:Date.now()
+});
+
+recentlyPlayed =
+recentlyPlayed.slice(0,20);
+
+localStorage.setItem(
+"nerbertRecent",
+JSON.stringify(recentlyPlayed)
+);
+
+}
+
+document
+.getElementById("recentToggle")
+.onclick=()=>{
+
+showingRecent=!showingRecent;
+
+document.getElementById("recentToggle")
+.textContent =
+showingRecent
+? "📚 All Media"
+: "🕘 Recently Played";
+
+renderSongs();
+loadVideos();
+
+};
+
+
+loadSongs();
+
+};
+
+/* =========================
+   VIDEO PLAYER
+========================= */
+
+const videosBox =
+document.getElementById("videos");
+
+const mainVideo =
+document.getElementById("mainVideo");
+
+const videoEmpty =
+document.getElementById("videoEmpty");
+
+const videoTitle =
+document.getElementById("videoTitle");
+
+const videoPlay =
+document.getElementById("videoPlay");
+
+async function loadVideos(){
+
+try{
+
+const response =
+await fetch("/videos");
+
+const videos =
+await response.json();
+
+renderVideos(videos);
+
+}catch(error){
+
+videosBox.innerHTML =
+"Unable to load videos.";
+
+}
+
+}
+
+function renderVideos(videos){
+
+videosBox.innerHTML="";
+
+if(!videos.length){
+
+videosBox.innerHTML =
+"<p style='color:#777'>No videos found.</p>";
+
+return;
+
+}
+
+videos
+.filter(video =>
+!showingFavorites ||
+isFavorite("video",video.name)
+)
+.forEach(video=>{
+
+const card =
+document.createElement("div");
+
+card.className="video-card";
+
+const preview =
+document.createElement("video");
+
+preview.src=video.url;
+preview.preload="metadata";
+preview.muted=true;
+preview.playsInline=true;
+
+const info =
+document.createElement("div");
+
+info.className="video-info";
+
+const name =
+document.createElement("div");
+
+name.className="video-name";
+
+name.textContent =
+cleanName(video.name);
+
+const heart =
+document.createElement("button");
+
+heart.className="favorite";
+
+updateFavoriteButton(
+heart,
+"video",
+video.name
+);
+
+heart.onclick=(event)=>{
+event.stopPropagation();
+toggleFavorite("video",video.name);
+};
+
+info.appendChild(name);
+info.appendChild(heart);
+
+card.appendChild(preview);
+card.appendChild(info);
+
+card.onclick=()=>{
+
+addRecent("video",video);
+
+mainVideo.src=video.url;
+mainVideo.style.display="block";
+
+videoEmpty.style.display="none";
+
+videoTitle.textContent =
+cleanName(video.name);
+
+mainVideo.play();
+
+videoPlay.textContent="⏸";
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+};
+
+videosBox.appendChild(card);
+
+});
+
+}
+
+videoPlay.onclick=()=>{
+
+if(!mainVideo.src)return;
+
+if(mainVideo.paused){
+
+mainVideo.play();
+videoPlay.textContent="⏸";
+
+}else{
+
+mainVideo.pause();
+videoPlay.textContent="▶";
+
+}
+
+};
+
+mainVideo.onplay=()=>{
+
+videoPlay.textContent="⏸";
+
+};
+
+mainVideo.onpause=()=>{
+
+videoPlay.textContent="▶";
+
+};
+
+document.getElementById("videoBack")
+.onclick=()=>{
+
+mainVideo.currentTime =
+Math.max(0,mainVideo.currentTime-10);
+
+};
+
+document.getElementById("videoForward")
+.onclick=()=>{
+
+mainVideo.currentTime =
+Math.min(
+mainVideo.duration,
+mainVideo.currentTime+10
+);
+
+};
+
+document.getElementById("videoFullscreen")
+.onclick=()=>{
+
+if(mainVideo.requestFullscreen){
+
+mainVideo.requestFullscreen();
+
+}else if(mainVideo.webkitEnterFullscreen){
+
+mainVideo.webkitEnterFullscreen();
+
+}
+
+};
+
+document.getElementById("videoFile")
+.onchange=async e=>{
+
+for(const file of e.target.files){
+
+const form =
+new FormData();
+
+form.append("video",file);
+
+await fetch("/upload-video",{
+method:"POST",
+body:form
+});
+
+}
+
+loadVideos();
+
+};
+
+
+/* =========================
+   SEARCH
+========================= */
+
+const searchInput =
+document.getElementById("searchInput");
+
+if(searchInput){
+
+searchInput.addEventListener("input",()=>{
+
+const query =
+searchInput.value
+.toLowerCase()
+.trim();
+
+filterMusic(query);
+filterVideos(query);
+
+});
+
+}
+
+function filterMusic(query){
+
+document
+.querySelectorAll("#songs .song")
+.forEach((row,i)=>{
+
+const text =
+row.textContent.toLowerCase();
+
+row.style.display =
+!query || text.includes(query)
+? ""
+: "none";
+
+});
+
+}
+
+function filterVideos(query){
+
+document
+.querySelectorAll("#videos .video-card")
+.forEach(card=>{
+
+const text =
+card.textContent.toLowerCase();
+
+card.style.display =
+!query || text.includes(query)
+? ""
+: "none";
+
+});
+
+}
+
+
+
+/* =========================
+   FAVORITES
+========================= */
+
+let favorites =
+JSON.parse(localStorage.getItem("nerbertFavorites") || "[]");
+
+let showingFavorites = false;
+
+function isFavorite(type,name){
+
+return favorites.some(item =>
+item.type === type && item.name === name
+);
+
+}
+
+function toggleFavorite(type,name){
+
+const existing =
+favorites.findIndex(item =>
+item.type === type && item.name === name
+);
+
+if(existing >= 0){
+
+favorites.splice(existing,1);
+
+}else{
+
+favorites.push({
+type:type,
+name:name
+});
+
+}
+
+localStorage.setItem(
+"nerbertFavorites",
+JSON.stringify(favorites)
+);
+
+renderSongs();
+
+loadVideos();
+
+}
+
+function updateFavoriteButton(button,type,name){
+
+button.textContent =
+isFavorite(type,name)
+? "❤️"
+: "♡";
+
+}
+
+document
+.getElementById("favoritesToggle")
+.onclick=()=>{
+
+showingFavorites=!showingFavorites;
+
+const button =
+document.getElementById("favoritesToggle");
+
+button.textContent =
+showingFavorites
+? "📚 All Media"
+: "❤️ Favorites";
+
+renderSongs();
+loadVideos();
+
+};
+
+
+
+/* =========================
+   RECENTLY PLAYED
+========================= */
+
+let recentlyPlayed =
+JSON.parse(
+localStorage.getItem("nerbertRecent") || "[]"
+);
+
+let showingRecent = false;
+
+function addRecent(type,item){
+
+recentlyPlayed =
+recentlyPlayed.filter(x =>
+!(x.type === type && x.name === item.name)
+);
+
+recentlyPlayed.unshift({
+type:type,
+name:item.name,
+url:item.url,
+time:Date.now()
+});
+
+recentlyPlayed =
+recentlyPlayed.slice(0,20);
+
+localStorage.setItem(
+"nerbertRecent",
+JSON.stringify(recentlyPlayed)
+);
+
+}
+
+document
+.getElementById("recentToggle")
+.onclick=()=>{
+
+showingRecent=!showingRecent;
+
+document.getElementById("recentToggle")
+.textContent =
+showingRecent
+? "📚 All Media"
+: "🕘 Recently Played";
+
+renderSongs();
+loadVideos();
+
+};
+
+
+loadSongs();
+
+</script>
+
+</body>
+
+</html>

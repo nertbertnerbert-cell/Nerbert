@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Nerbert Music</string>
+    <string name="title_activity_main">Nerbert Music</string>
+    <string name="package_name">com.nerbert.music</string>
+    <string name="custom_url_scheme">com.nerbert.music</string>
+</resources>
