@@ -1,0 +1,9 @@
+node_modules/
+.gradle/
+android/.gradle/
+android/build/
+android/app/build/
+*.iml
+local.properties
+.env
+nerbert-check.js

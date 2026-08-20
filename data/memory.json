@@ -1,0 +1,66 @@
+{
+  "conversations": [
+    {
+      "role": "user",
+      "message": "Hello",
+      "created_at": "2026-08-19T20:50:50.364Z"
+    },
+    {
+      "role": "assistant",
+      "message": "Hello! I'm NERBERT AI. 🧠\n\nI'm currently running in Local Mode. My memory and project systems are online.",
+      "created_at": "2026-08-19T20:50:50.395Z"
+    },
+    {
+      "role": "user",
+      "message": "what is my name",
+      "created_at": "2026-08-19T20:57:52.113Z"
+    },
+    {
+      "role": "assistant",
+      "message": "I received your message and saved it to my local memory. 🧠\n\nI'm currently in Local Mode because the external AI service has no credits. We can continue building my capabilities while keeping the AI connection ready.",
+      "created_at": "2026-08-19T20:57:52.176Z"
+    },
+    {
+      "role": "user",
+      "message": "What is my name",
+      "created_at": "2026-08-19T21:40:20.669Z"
+    },
+    {
+      "role": "assistant",
+      "message": "I'm NERBERT AI — your personal assistant platform.\n\nI'm being built with memory, voice, web tools, software creation, creative tools, device assistance and more.",
+      "created_at": "2026-08-19T21:40:20.699Z"
+    },
+    {
+      "role": "user",
+      "message": "What is my name",
+      "created_at": "2026-08-19T21:52:11.412Z"
+    },
+    {
+      "role": "assistant",
+      "message": "Your name is Nerbert. 🧠",
+      "created_at": "2026-08-19T21:52:11.448Z"
+    },
+    {
+      "role": "user",
+      "message": "What is the weather",
+      "created_at": "2026-08-19T22:04:19.866Z"
+    },
+    {
+      "role": "assistant",
+      "message": "🌦️ Weather in undefined\n\n🌡️ Temperature: undefined°C\n🌡️ Feels like: undefined°C\n💧 Humidity: undefined%\n💨 Wind: undefined km/h\n☀️ undefined",
+      "created_at": "2026-08-19T22:04:28.931Z"
+    },
+    {
+      "role": "user",
+      "message": "What is the weather",
+      "created_at": "2026-08-19T22:09:39.654Z"
+    },
+    {
+      "role": "assistant",
+      "message": "🌦️ Weather in Lusaka\n\n🌡️ Temperature: 17°C\n🌡️ Feels like: 13°C\n💧 Humidity: 43%\n💨 Wind: 12 km/h\n☀️ Clear ",
+      "created_at": "2026-08-19T22:09:42.355Z"
+    }
+  ],
+  "memories": [],
+  "projects": []
+}

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NERBERT AI</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0b0b0f;
+  color: white;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+}
+
+.app {
+  width: 100%;
+  max-width: 650px;
+  height: 100vh;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  padding: 18px;
+  background: #111116;
+  border-bottom: 1px solid #292932;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+header p {
+  margin: 5px 0 0;
+  color: #999;
+  font-size: 13px;
+}
+
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.message {
+  max-width: 85%;
+  margin-bottom: 15px;
+  padding: 13px 15px;
+  border-radius: 15px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.bot {
+  background: #191920;
+  margin-right: auto;
+}
+
+.user {
+  background: #30303b;
+  margin-left: auto;
+}
+
+.input-area {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  background: #111116;
+  border-top: 1px solid #292932;
+}
+
+input {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  outline: none;
+  border-radius: 12px;
+  background: #202027;
+  color: white;
+  font-size: 16px;
+}
+
+button {
+  width: 55px;
+  border: none;
+  border-radius: 12px;
+  background: white;
+  color: black;
+  font-size: 20px;
+}
+
+.status {
+  font-size: 11px;
+  color: #777;
+  padding: 0 20px 8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <h1>🤖 NERBERT AI</h1>
+  <p>Your personal AI assistant</p>
+</header>
+
+<div id="messages"></div>
+
+<div class="status">
+  🧠 Memory: ONLINE
+</div>
+
+<div class="input-area">
+
+  <button id="voiceButton">🎤</button>
+
+  <input
+    id="messageInput"
+    type="text"
+    placeholder="Talk to NERBERT..."
+    autocomplete="off"
+  >
+
+  <button id="sendButton">➤</button>
+
+</div>
+
+</div>
+
+<script>
+
+const input = document.getElementById("messageInput");
+const messages = document.getElementById("messages");
+const sendButton = document.getElementById("sendButton");
+const voiceButton = document.getElementById("voiceButton");
+
+let userProfile = {
+  name: "User"
+};
+
+
+/* PROFILE */
+
+async function loadProfile() {
+
+  try {
+
+    const response = await fetch("/api/profile");
+
+    if (response.ok) {
+      userProfile = await response.json();
+    }
+
+  } catch (error) {
+
+    console.error("Profile error:", error);
+
+  }
+
+}
+
+
+/* MESSAGE */
+
+function addMessage(text, type) {
+
+  const message = document.createElement("div");
+
+  message.className = "message " + type;
+
+  message.textContent = text;
+
+  messages.appendChild(message);
+
+  messages.scrollTop = messages.scrollHeight;
+
+  return message;
+
+}
+
+
+/* MEMORY */
+
+async function saveConversation(role, message) {
+
+  try {
+
+    await fetch("/api/memory/conversation", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        role: role,
+        message: message
+      })
+
+    });
+
+  } catch (error) {
+
+    console.error("Memory error:", error);
+
+  }
+
+}
+
+
+/* HISTORY */
+
+async function loadHistory() {
+
+  try {
+
+    const response =
+      await fetch("/api/memory/conversations");
+
+    const data = await response.json();
+
+    if (
+      !data.conversations ||
+      data.conversations.length === 0
+    ) {
+
+      addMessage(
+        "Hello " +
+        userProfile.name +
+        ". I'm NERBERT AI. 🧠\n\n" +
+        "Local Mode is active and my memory is online.",
+        "bot"
+      );
+
+      return;
+
+    }
+
+    addMessage(
+      "Welcome back, " +
+      userProfile.name +
+      ". 🧠",
+      "bot"
+    );
+
+    data.conversations.forEach(item => {
+
+      addMessage(
+        item.message,
+        item.role === "user"
+          ? "user"
+          : "bot"
+      );
+
+    });
+
+  } catch (error) {
+
+    console.error("History error:", error);
+
+    addMessage(
+      "Hello " +
+      userProfile.name +
+      ". I'm NERBERT AI.",
+      "bot"
+    );
+
+  }
+
+}
+
+
+/* SPEECH OUTPUT */
+
+function speak(text) {
+
+  if (!("speechSynthesis" in window)) {
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const speech =
+    new SpeechSynthesisUtterance(text);
+
+  speech.lang = "en-US";
+  speech.rate = 1;
+  speech.pitch = 1;
+  speech.volume = 1;
+
+  window.speechSynthesis.speak(speech);
+
+}
+
+
+/* CHAT */
+
+async function sendMessage() {
+
+  const text = input.value.trim();
+
+  if (!text) return;
+
+  addMessage(text, "user");
+  input.value = "";
+
+  const thinking = document.createElement("div");
+  thinking.className = "message bot";
+  thinking.textContent = "Thinking...";
+  messages.appendChild(thinking);
+
+  const lower = text.toLowerCase();
+
+  try {
+
+    /* 🌐 WEB SEARCH */
+
+    if (
+      lower.startsWith("search ") ||
+      lower.startsWith("search the web") ||
+      lower.includes("search the web for") ||
+      lower.includes("look up ")
+    ) {
+
+      let query = text
+        .replace(/search the web for/i, "")
+        .replace(/search the web/i, "")
+        .replace(/^search/i, "")
+        .replace(/look up/i, "")
+        .trim();
+
+      if (!query) {
+        thinking.textContent =
+          "What would you like me to search for?";
+        return;
+      }
+
+      thinking.textContent = "🌐 Searching the web...";
+
+      const response = await fetch(
+        "/api/search?q=" +
+        encodeURIComponent(query)
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.results) {
+        throw new Error(
+          data.error || "Search failed"
+        );
+      }
+
+      if (data.results.length === 0) {
+        thinking.textContent =
+          "🌐 I couldn't find any results for: " +
+          query;
+        return;
+      }
+
+      let output =
+        "🌐 Search results for: " +
+        query +
+        "\n\n";
+
+      data.results.forEach((result, index) => {
+
+        output +=
+          `${index + 1}. ${result.title}\n`;
+
+        if (result.description) {
+          output +=
+            `${result.description}\n`;
+        }
+
+        output +=
+          `${result.url}\n\n`;
+
+      });
+
+      thinking.textContent = output;
+
+      return;
+    }
+
+    /* 🌦️ WEATHER */
+
+    if (
+      lower.includes("weather") ||
+      lower.includes("temperature")
+    ) {
+
+      thinking.textContent =
+        "🌦️ Checking the weather...";
+
+      const response = await fetch(
+        "/api/weather?city=Lusaka"
+      );
+
+      const weather = await response.json();
+
+      thinking.textContent =
+        "🌦️ Weather in " +
+        (weather.city || "Lusaka") +
+        "\n\n" +
+        "🌡️ Temperature: " +
+        (weather.temperature ?? "unknown") +
+        "°C\n" +
+        "🌡️ Feels like: " +
+        (weather.feelsLike ?? "unknown") +
+        "°C\n" +
+        "💧 Humidity: " +
+        (weather.humidity ?? "unknown") +
+        "%\n" +
+        "💨 Wind: " +
+        (weather.wind ?? "unknown") +
+        " km/h\n" +
+        "☀️ " +
+        (weather.description || "Unknown");
+
+      return;
+    }
+
+    /* 🧠 NORMAL CHAT */
+
+    const response = await fetch(
+      "/api/chat",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: text
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    thinking.textContent =
+      data.reply ||
+      "NERBERT couldn't generate a response.";
+
+  } catch (error) {
+
+    console.error(error);
+
+    thinking.textContent =
+      "⚠️ NERBERT couldn't complete that request.";
+
+  }
+}
+
+
+
+/* ENTER KEY */
+
+input.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (event.key === "Enter") {
+      sendMessage();
+    }
+
+  }
+);
+
+
+/* SEND BUTTON */
+
+sendButton.addEventListener(
+  "click",
+  sendMessage
+);
+
+
+/* VOICE INPUT */
+
+let recognition = null;
+
+if ("webkitSpeechRecognition" in window) {
+
+  recognition =
+    new webkitSpeechRecognition();
+
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = "en-US";
+
+  recognition.onstart = function() {
+
+    voiceButton.textContent = "🔴";
+
+  };
+
+  recognition.onend = function() {
+
+    voiceButton.textContent = "🎤";
+
+  };
+
+  recognition.onresult = function(event) {
+
+    const transcript =
+      event.results[0][0].transcript;
+
+    input.value = transcript;
+
+    sendMessage();
+
+  };
+
+  recognition.onerror = function(event) {
+
+    console.log(
+      "Voice error:",
+      event.error
+    );
+
+    voiceButton.textContent = "🎤";
+
+  };
+
+  voiceButton.addEventListener(
+    "click",
+    function() {
+
+      recognition.start();
+
+    }
+  );
+
+} else {
+
+  voiceButton.addEventListener(
+    "click",
+    function() {
+
+      alert(
+        "Voice recognition is not supported by this browser."
+      );
+
+    }
+  );
+
+}
+
+
+/* START */
+
+async function startNERBERT() {
+
+  await loadProfile();
+
+  await loadHistory();
+
+}
+
+startNERBERT();
+
+</script>
+
+</body>
+</html>
