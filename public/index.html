@@ -393,6 +393,8 @@ async function sendMessage() {
       return;
     }
 
+    const API_BASE = "http://127.0.0.1:3000";
+
     /* 🌦️ WEATHER */
 
     if (
@@ -404,7 +406,7 @@ async function sendMessage() {
         "🌦️ Checking the weather...";
 
       const response = await fetch(
-        "/api/weather?city=Lusaka"
+        API_BASE + "/api/weather?city=Lusaka"
       );
 
       const weather = await response.json();
@@ -432,8 +434,6 @@ async function sendMessage() {
     }
 
     /* 🧠 NORMAL CHAT */
-
-    const API_BASE = "http://127.0.0.1:3000";
 
     const response = await fetch(
       API_BASE + "/api/chat",
