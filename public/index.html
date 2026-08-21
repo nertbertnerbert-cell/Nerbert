@@ -135,7 +135,60 @@ button {
       <p>What would you like me to help you with?</p>
     </section>
 
-    <section class="quick-actions">
+    
+<section class="usage-card">
+
+  <div class="usage-header">
+    <div>
+      <small>YOUR PLAN</small>
+      <h3 id="usagePlan">FREE</h3>
+    </div>
+
+    <span id="usagePlanIcon">⭐</span>
+  </div>
+
+  <div class="usage-row">
+
+    <div class="usage-label">
+      <span>📁 Projects</span>
+      <strong id="projectsUsage">0 / 3</strong>
+    </div>
+
+    <div class="usage-bar">
+      <div
+        id="projectsUsageBar"
+        class="usage-fill">
+      </div>
+    </div>
+
+  </div>
+
+  <div class="usage-row">
+
+    <div class="usage-label">
+      <span>🧠 Memory</span>
+      <strong id="memoryUsage">0 / 20</strong>
+    </div>
+
+    <div class="usage-bar">
+      <div
+        id="memoryUsageBar"
+        class="usage-fill">
+      </div>
+    </div>
+
+  </div>
+
+  <button
+    id="usageUpgradeButton"
+    class="primary-button"
+    onclick="showUpgrade()">
+    ⭐ Upgrade to Pro
+  </button>
+
+</section>
+
+<section class="quick-actions">
 
       <button class="action-card pro-card" onclick="showUpgrade()">
         <span class="action-icon">⭐</span>
@@ -962,6 +1015,162 @@ function updatePlanBadge(plan) {
 
 }
 
+
+async function loadUsage() {
+
+  try {
+
+    const response =
+      await fetch(
+        API_BASE + "/api/usage"
+      );
+
+    if (!response.ok) {
+      throw new Error(
+        "Usage request failed"
+      );
+    }
+
+    const data =
+      await response.json();
+
+    const isPro =
+      data.pro === true ||
+      data.plan === "pro";
+
+    const plan =
+      document.getElementById(
+        "usagePlan"
+      );
+
+    const icon =
+      document.getElementById(
+        "usagePlanIcon"
+      );
+
+    const projects =
+      document.getElementById(
+        "projectsUsage"
+      );
+
+    const memories =
+      document.getElementById(
+        "memoryUsage"
+      );
+
+    const projectsBar =
+      document.getElementById(
+        "projectsUsageBar"
+      );
+
+    const memoryBar =
+      document.getElementById(
+        "memoryUsageBar"
+      );
+
+    const upgrade =
+      document.getElementById(
+        "usageUpgradeButton"
+      );
+
+    if (isPro) {
+
+      if (plan)
+        plan.textContent = "PRO";
+
+      if (icon)
+        icon.textContent = "⭐";
+
+      if (projects)
+        projects.textContent = "Unlimited";
+
+      if (memories)
+        memories.textContent = "Unlimited";
+
+      if (projectsBar)
+        projectsBar.style.width = "100%";
+
+      if (memoryBar)
+        memoryBar.style.width = "100%";
+
+      if (upgrade)
+        upgrade.style.display = "none";
+
+    } else {
+
+      if (plan)
+        plan.textContent = "FREE";
+
+      if (icon)
+        icon.textContent = "⭐";
+
+      const projectLimit =
+        data.projects.limit || 3;
+
+      const memoryLimit =
+        data.memories.limit || 20;
+
+      const projectUsed =
+        data.projects.used || 0;
+
+      const memoryUsed =
+        data.memories.used || 0;
+
+      if (projects) {
+
+        projects.textContent =
+          projectUsed +
+          " / " +
+          projectLimit;
+
+      }
+
+      if (memories) {
+
+        memories.textContent =
+          memoryUsed +
+          " / " +
+          memoryLimit;
+
+      }
+
+      if (projectsBar) {
+
+        projectsBar.style.width =
+          Math.min(
+            100,
+            (projectUsed / projectLimit) * 100
+          ) + "%";
+
+      }
+
+      if (memoryBar) {
+
+        memoryBar.style.width =
+          Math.min(
+            100,
+            (memoryUsed / memoryLimit) * 100
+          ) + "%";
+
+      }
+
+      if (upgrade)
+        upgrade.style.display = "block";
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Usage error:",
+      error
+    );
+
+  }
+
+}
+
+
 async function loadProfile() {
 
   try {
@@ -1387,6 +1596,7 @@ if ("webkitSpeechRecognition" in window) {
 async function startNERBERT() {
 
   await loadProfile();
+loadUsage();
 
   await loadHistory();
 
