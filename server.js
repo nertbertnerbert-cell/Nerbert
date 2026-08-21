@@ -219,6 +219,21 @@ app.get("/api/status", (req, res) => {
 });
 
 
+
+/* PLAN */
+
+app.get("/api/plan", (req, res) => {
+
+  const plan = getCurrentPlan();
+
+  res.json({
+    plan,
+    pro: plan === "pro"
+  });
+
+});
+
+
 /* PROFILE */
 
 app.get("/api/profile", (req, res) => {
