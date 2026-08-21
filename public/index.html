@@ -364,8 +364,62 @@ async function createNewProject() {
 
 function showUpgrade() {
 
-  const overlay = document.getElementById("overlay");
-  const panel = document.getElementById("panel");
+  const overlay =
+    document.getElementById("overlay");
+
+  const panel =
+    document.getElementById("panel");
+
+  const isPro =
+    String(userProfile.plan || "free").toLowerCase() === "pro";
+
+  if (isPro) {
+
+    panel.innerHTML = `
+      <div class="panel-header">
+        <h2>⭐ NERBERT Pro</h2>
+        <button onclick="hidePanel()">✕</button>
+      </div>
+
+      <div class="pro-hero">
+        <div class="pro-icon">⭐</div>
+        <h3>You're already Pro</h3>
+        <p>Your NERBERT Pro features are active.</p>
+      </div>
+
+      <div class="pro-features">
+
+        <div class="panel-item">
+          <strong>🧠 Advanced Memory</strong>
+          <p>Keep more useful information across conversations.</p>
+        </div>
+
+        <div class="panel-item">
+          <strong>🌐 Advanced Web Tools</strong>
+          <p>Search and explore information more efficiently.</p>
+        </div>
+
+        <div class="panel-item">
+          <strong>📁 Unlimited Projects</strong>
+          <p>Organize your work and ideas in one place.</p>
+        </div>
+
+        <div class="panel-item">
+          <strong>🚀 Priority AI Features</strong>
+          <p>Access future NERBERT capabilities first.</p>
+        </div>
+
+      </div>
+
+      <button class="primary-button"
+              onclick="hidePanel()">
+        Continue with NERBERT Pro
+      </button>
+    `;
+
+    overlay.classList.add("active");
+    return;
+  }
 
   panel.innerHTML = `
     <div class="panel-header">
@@ -403,7 +457,8 @@ function showUpgrade() {
 
     </div>
 
-    <button class="primary-button" onclick="showComingSoon()">
+    <button class="primary-button"
+            onclick="showComingSoon()">
       ⭐ Upgrade to Pro
     </button>
 
@@ -417,7 +472,8 @@ function showUpgrade() {
 
 function showComingSoon() {
 
-  const panel = document.getElementById("panel");
+  const panel =
+    document.getElementById("panel");
 
   panel.innerHTML = `
     <div class="panel-header">
@@ -436,7 +492,8 @@ function showComingSoon() {
       </p>
     </div>
 
-    <button class="primary-button" onclick="hidePanel()">
+    <button class="primary-button"
+            onclick="hidePanel()">
       Continue with Free
     </button>
   `;
@@ -580,6 +637,31 @@ function clearRecent() {
 
 /* PROFILE */
 
+
+function updatePlanBadge(plan) {
+
+  const badge =
+    document.getElementById("planBadge");
+
+  if (!badge) return;
+
+  const normalized =
+    String(plan || "free").toLowerCase();
+
+  if (normalized === "pro") {
+
+    badge.innerHTML = "<span>⭐ PRO</span>";
+    badge.classList.add("pro");
+
+  } else {
+
+    badge.innerHTML = "<span>FREE</span>";
+    badge.classList.remove("pro");
+
+  }
+
+}
+
 async function loadProfile() {
 
   try {
@@ -587,7 +669,12 @@ async function loadProfile() {
     const response = await fetch("/api/profile");
 
     if (response.ok) {
+
       userProfile = await response.json();
+
+      updatePlanBadge(
+        userProfile.plan || "free"
+      );
 
       const welcomeName =
         document.getElementById("welcomeName");
