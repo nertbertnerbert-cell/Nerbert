@@ -110,7 +110,12 @@ button {
 
 <div class="app">
 
-  <header class="topbar">
+
+<div id="planBadge" class="plan-badge">
+  <span>FREE</span>
+</div>
+
+<header class="topbar">
     <div class="brand">
       <div class="brand-icon">N</div>
       <div>
@@ -131,6 +136,14 @@ button {
     </section>
 
     <section class="quick-actions">
+
+      <button class="action-card pro-card" onclick="showUpgrade()">
+        <span class="action-icon">⭐</span>
+        <strong>NERBERT Pro</strong>
+        <small>Unlock more AI features</small>
+      </button>
+
+
 
       <button class="action-card" onclick="quickAction('Search the web for latest technology')">
         <span class="action-icon">🌐</span>
@@ -346,6 +359,88 @@ async function createNewProject() {
   } catch (error) {
     alert("Could not create project.");
   }
+}
+
+
+function showUpgrade() {
+
+  const overlay = document.getElementById("overlay");
+  const panel = document.getElementById("panel");
+
+  panel.innerHTML = `
+    <div class="panel-header">
+      <h2>⭐ NERBERT Pro</h2>
+      <button onclick="hidePanel()">✕</button>
+    </div>
+
+    <div class="pro-hero">
+      <div class="pro-icon">⭐</div>
+      <h3>Unlock NERBERT Pro</h3>
+      <p>Take your personal AI assistant further.</p>
+    </div>
+
+    <div class="pro-features">
+
+      <div class="panel-item">
+        <strong>🧠 Advanced Memory</strong>
+        <p>Keep more useful information across conversations.</p>
+      </div>
+
+      <div class="panel-item">
+        <strong>🌐 Advanced Web Tools</strong>
+        <p>Search and explore information more efficiently.</p>
+      </div>
+
+      <div class="panel-item">
+        <strong>📁 Unlimited Projects</strong>
+        <p>Organize your work and ideas in one place.</p>
+      </div>
+
+      <div class="panel-item">
+        <strong>🚀 Priority AI Features</strong>
+        <p>Access future NERBERT capabilities first.</p>
+      </div>
+
+    </div>
+
+    <button class="primary-button" onclick="showComingSoon()">
+      ⭐ Upgrade to Pro
+    </button>
+
+    <small class="upgrade-note">
+      Payments will be connected in a future release.
+    </small>
+  `;
+
+  overlay.classList.add("active");
+}
+
+function showComingSoon() {
+
+  const panel = document.getElementById("panel");
+
+  panel.innerHTML = `
+    <div class="panel-header">
+      <h2>🚀 Coming Soon</h2>
+      <button onclick="hidePanel()">✕</button>
+    </div>
+
+    <div class="empty-state">
+      <span>⭐</span>
+      <p>
+        NERBERT Pro subscriptions are coming soon.
+      </p>
+      <p>
+        Your account will be able to upgrade here
+        once billing is connected.
+      </p>
+    </div>
+
+    <button class="primary-button" onclick="hidePanel()">
+      Continue with Free
+    </button>
+  `;
+
 }
 
 function showSettings() {
