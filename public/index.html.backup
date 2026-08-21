@@ -322,6 +322,8 @@ async function sendMessage() {
 
   const lower = text.toLowerCase();
 
+  const API_BASE = "http://127.0.0.1:3000";
+
   try {
 
     /* 🌐 WEB SEARCH */
@@ -349,7 +351,7 @@ async function sendMessage() {
       thinking.textContent = "🌐 Searching the web...";
 
       const response = await fetch(
-        "/api/search?q=" +
+        API_BASE + "/api/search?q=" +
         encodeURIComponent(query)
       );
 
@@ -404,7 +406,7 @@ async function sendMessage() {
         "🌦️ Checking the weather...";
 
       const response = await fetch(
-        "/api/weather?city=Lusaka"
+        API_BASE + "/api/weather?city=Lusaka"
       );
 
       const weather = await response.json();
@@ -434,7 +436,7 @@ async function sendMessage() {
     /* 🧠 NORMAL CHAT */
 
     const response = await fetch(
-      "/api/chat",
+      API_BASE + "/api/chat",
       {
         method: "POST",
         headers: {
@@ -462,139 +464,6 @@ async function sendMessage() {
   }
 }
 
-  const text = input.value.trim();
-
-  if (!text) {
-    return;
-  }
-
-  addMessage(text, "user");
-
-  await saveConversation("user", text);
-
-  input.value = "";
-
-  const lower = text.toLowerCase();
-
-  let reply;
-
-if (
-  lower.includes("weather") ||
-  lower.includes("temperature")
-) {
-
-  try {
-
-    const response =
-      await fetch("/api/weather?city=Lusaka");
-
-    if (!response.ok) {
-      throw new Error("Weather request failed");
-    }
-
-    const weather =
-      await response.json();
-
-    console.log("Weather data:", weather);
-
-    reply =
-      "🌦️ Weather in " +
-      (weather.city || "Lusaka") +
-      "\n\n" +
-      "🌡️ Temperature: " +
-      (weather.temperature ?? "unknown") +
-      "°C\n" +
-      "🌡️ Feels like: " +
-      (weather.feelsLike ?? "unknown") +
-      "°C\n" +
-      "💧 Humidity: " +
-      (weather.humidity ?? "unknown") +
-      "%\n" +
-      "💨 Wind: " +
-      (weather.wind ?? "unknown") +
-      " km/h\n" +
-      "☀️ " +
-      (weather.description || "Unknown");
-
-  } catch (error) {
-
-    console.error("Weather error:", error);
-
-    reply =
-      "🌦️ I couldn't retrieve the weather right now.";
-
-  }
-
-} else
-
-  if (
-    lower.includes("what is my name") ||
-    lower.includes("what's my name") ||
-    lower.includes("who am i")
-  ) {
-
-    reply =
-      "Your name is " +
-      userProfile.name +
-      ". 🧠";
-
-
-  } else if (
-    lower.includes("hello") ||
-    lower.includes("hi") ||
-    lower.includes("hey")
-  ) {
-
-    reply =
-      "Hello " +
-      userProfile.name +
-      "! 👋\n\n" +
-      "I'm NERBERT AI. My memory and voice systems are online.";
-
-
-  } else if (
-    lower.includes("who are you")
-  ) {
-
-    reply =
-      "I'm NERBERT AI — your personal AI assistant platform.\n\n" +
-      "I'm being built with memory, voice, web access, " +
-      "software creation, creative tools and device assistance.";
-
-
-  } else if (
-    lower.includes("remember")
-  ) {
-
-    reply =
-      "I can store information in my local memory. 🧠";
-
-
-  } else if (
-    lower.includes("build")
-  ) {
-
-    reply =
-      "I'm ready to help build software, apps and websites. 💻";
-
-
-  } else {
-
-    reply =
-      "I received your message, " +
-      userProfile.name +
-      ". 🧠\n\n" +
-      "I'm currently running in Local Mode because the external AI service has no credits.";
-
-  }
-
-  addMessage(reply, "bot");
-
-  await saveConversation("assistant", reply);
-
-  speak(reply);
-
-}
 
 
 /* ENTER KEY */
