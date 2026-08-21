@@ -433,8 +433,10 @@ async function sendMessage() {
 
     /* 🧠 NORMAL CHAT */
 
+    const API_BASE = "http://127.0.0.1:3000";
+
     const response = await fetch(
-      "/api/chat",
+      API_BASE + "/api/chat",
       {
         method: "POST",
         headers: {
