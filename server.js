@@ -290,6 +290,108 @@ app.get("/api/weather", async (req, res) => {
 });
 
 
+/* MEMORY API */
+
+app.get("/api/memory", (req, res) => {
+  try {
+    const memories = getMemories(50);
+
+    res.json({
+      memories
+    });
+
+  } catch (error) {
+    console.error("Memory error:", error);
+
+    res.status(500).json({
+      error: "Could not load memories."
+    });
+  }
+});
+
+
+app.post("/api/memory", (req, res) => {
+  try {
+    const category =
+      String(req.body?.category || "general").trim();
+
+    const content =
+      String(req.body?.content || "").trim();
+
+    if (!content) {
+      return res.status(400).json({
+        error: "Memory content is required."
+      });
+    }
+
+    saveMemory(category, content);
+
+    res.json({
+      success: true,
+      category,
+      content
+    });
+
+  } catch (error) {
+    console.error("Memory save error:", error);
+
+    res.status(500).json({
+      error: "Could not save memory."
+    });
+  }
+});
+
+
+/* PROJECT API */
+
+app.get("/api/projects", (req, res) => {
+  try {
+    res.json({
+      projects: getProjects()
+    });
+
+  } catch (error) {
+    console.error("Projects error:", error);
+
+    res.status(500).json({
+      error: "Could not load projects."
+    });
+  }
+});
+
+
+app.post("/api/projects", (req, res) => {
+  try {
+    const name =
+      String(req.body?.name || "").trim();
+
+    const description =
+      String(req.body?.description || "").trim();
+
+    if (!name) {
+      return res.status(400).json({
+        error: "Project name is required."
+      });
+    }
+
+    const project =
+      createProject(name, description);
+
+    res.status(201).json({
+      success: true,
+      project
+    });
+
+  } catch (error) {
+    console.error("Project creation error:", error);
+
+    res.status(500).json({
+      error: "Could not create project."
+    });
+  }
+});
+
+
 /* CHAT — LOCAL MODE */
 
 app.post("/api/chat", async (req, res) => {
