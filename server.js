@@ -19,6 +19,33 @@ const PORT = 3000;
 
 const profilePath = path.join(__dirname, "profile.json");
 
+const FREE_LIMITS = {
+  memories: 20,
+  projects: 3
+};
+
+function getCurrentPlan() {
+  try {
+    if (!fs.existsSync(profilePath)) return "free";
+
+    const currentProfile = JSON.parse(
+      fs.readFileSync(profilePath, "utf8")
+    );
+
+    return String(
+      currentProfile.plan || "free"
+    ).toLowerCase();
+  } catch {
+    return "free";
+  }
+}
+
+function isProUser() {
+  return getCurrentPlan() === "pro";
+}
+
+
+
 let profile = {
   name: "Nerbert"
 };
