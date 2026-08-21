@@ -235,45 +235,264 @@ function clearChat() {
 }
 
 async function showMemory() {
-  const overlay = document.getElementById("overlay");
-  const panel = document.getElementById("panel");
+
+  const overlay =
+    document.getElementById("overlay");
+
+  const panel =
+    document.getElementById("panel");
 
   panel.innerHTML = `
     <div class="panel-header">
       <h2>🧠 Memory</h2>
       <button onclick="hidePanel()">✕</button>
     </div>
-    <p>Things NERBERT remembers about you.</p>
-    <div id="memoryContent">Loading...</div>
+
+    <p>
+      Things NERBERT remembers about you.
+    </p>
+
+    <div class="memory-form">
+
+      <input
+        id="memoryCategory"
+        type="text"
+        placeholder="Category (e.g. preference)"
+      >
+
+      <textarea
+        id="memoryContent"
+        placeholder="What should NERBERT remember?"
+        rows="3"
+      ></textarea>
+
+      <button
+        class="primary-button"
+        onclick="saveNewMemory()">
+        🧠 Save Memory
+      </button>
+
+    </div>
+
+    <div id="memoryList">
+      Loading...
+    </div>
   `;
 
   overlay.classList.add("active");
 
+  await loadMemoryList();
+}
+
+
+async function loadMemoryList() {
+
+  const list =
+    document.getElementById("memoryList");
+
+  if (!list) return;
+
   try {
-    const response = await fetch(
-      API_BASE + "/api/memory"
-    );
 
-    const data = await response.json();
-    const memories = data.memories || [];
+    const response =
+      await fetch(
+        API_BASE + "/api/memory"
+      );
 
-    document.getElementById("memoryContent").innerHTML =
+    const data =
+      await response.json();
+
+    const memories =
+      data.memories || [];
+
+    list.innerHTML =
       memories.length
-        ? memories.map(m =>
-            `<div class="panel-item">
-              <strong>${escapeHtml(m.category || "Memory")}</strong>
-              <p>${escapeHtml(m.content || "")}</p>
-            </div>`
-          ).join("")
-        : `<div class="empty-state">
-             🧠 No memories yet.
-           </div>`;
+        ? memories.map(memory => `
+            <div class="panel-item">
+
+              <strong>
+                ${escapeHtml(
+                  memory.category || "Memory"
+                )}
+              </strong>
+
+              <p>
+                ${escapeHtml(
+                  memory.content || ""
+                )}
+              </p>
+
+            </div>
+          `).join("")
+        : `
+          <div class="empty-state">
+            🧠 No memories yet.
+          </div>
+        `;
 
   } catch (error) {
-    document.getElementById("memoryContent").textContent =
-      "Unable to load memory.";
+
+    console.error(
+      "Memory loading error:",
+      error
+    );
+
+    list.textContent =
+      "Unable to load memories.";
   }
 }
+
+
+async function saveNewMemory() {
+
+  const categoryInput =
+    document.getElementById("memoryCategory");
+
+  const contentInput =
+    document.getElementById("memoryContent");
+
+  const category =
+    String(
+      categoryInput?.value || "general"
+    ).trim();
+
+  const content =
+    String(
+      contentInput?.value || ""
+    ).trim();
+
+  if (!content) {
+
+    alert(
+      "Enter something for NERBERT to remember."
+    );
+
+    return;
+  }
+
+  try {
+
+    const response =
+      await fetch(
+        API_BASE + "/api/memory",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            category,
+            content
+          })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (
+      response.status === 403 &&
+      data.code === "PRO_REQUIRED"
+    ) {
+
+      showMemoryUpgrade(data);
+
+      return;
+    }
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Could not save memory."
+      );
+    }
+
+    if (contentInput) {
+      contentInput.value = "";
+    }
+
+    await loadMemoryList();
+
+  } catch (error) {
+
+    console.error(
+      "Memory save error:",
+      error
+    );
+
+    alert(
+      "Could not save memory."
+    );
+  }
+}
+
+
+function showMemoryUpgrade(data) {
+
+  const overlay =
+    document.getElementById("overlay");
+
+  const panel =
+    document.getElementById("panel");
+
+  const limit =
+    data?.limit || 20;
+
+  panel.innerHTML = `
+    <div class="panel-header">
+      <h2>⭐ NERBERT Pro</h2>
+      <button onclick="hidePanel()">✕</button>
+    </div>
+
+    <div class="pro-hero">
+
+      <div class="pro-icon">🧠</div>
+
+      <h3>You've reached the Free memory limit</h3>
+
+      <p>
+        Free accounts can save up to
+        ${limit} memories.
+      </p>
+
+      <p>
+        Upgrade to NERBERT Pro for
+        expanded memory.
+      </p>
+
+    </div>
+
+    <div class="panel-item">
+
+      <strong>🧠 Advanced Memory</strong>
+
+      <p>
+        Keep more useful information
+        across your NERBERT conversations.
+      </p>
+
+    </div>
+
+    <button
+      class="primary-button"
+      onclick="hidePanel(); showUpgrade()">
+      ⭐ Upgrade to Pro
+    </button>
+
+    <button
+      class="clear-button"
+      onclick="hidePanel()">
+      Continue with Free
+    </button>
+  `;
+
+  overlay.classList.add("active");
+}
+
 
 async function showProjects() {
   const overlay = document.getElementById("overlay");
