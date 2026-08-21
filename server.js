@@ -366,6 +366,37 @@ app.post("/api/memory", (req, res) => {
       });
     }
 
+    /*
+     * NERBERT Pro entitlement
+     *
+     * Free users can save up to 20 memories.
+     * Pro users have unlimited memories.
+     */
+
+    const memories =
+      getMemories(100000);
+
+    const plan =
+      getCurrentPlan();
+
+    if (
+      plan !== "pro" &&
+      memories.length >= FREE_LIMITS.memories
+    ) {
+
+      return res.status(403).json({
+        error: "Memory limit reached.",
+        code: "PRO_REQUIRED",
+        plan: "free",
+        limit: FREE_LIMITS.memories,
+        message:
+          "Free accounts can save up to " +
+          FREE_LIMITS.memories +
+          " memories. Upgrade to NERBERT Pro for expanded memory."
+      });
+
+    }
+
     saveMemory(category, content);
 
     res.json({
@@ -414,6 +445,37 @@ app.post("/api/projects", (req, res) => {
       return res.status(400).json({
         error: "Project name is required."
       });
+    }
+
+    /*
+     * NERBERT Pro entitlement
+     *
+     * Free users can create up to 3 projects.
+     * Pro users have unlimited projects.
+     */
+
+    const projects =
+      getProjects();
+
+    const plan =
+      getCurrentPlan();
+
+    if (
+      plan !== "pro" &&
+      projects.length >= FREE_LIMITS.projects
+    ) {
+
+      return res.status(403).json({
+        error: "Project limit reached.",
+        code: "PRO_REQUIRED",
+        plan: "free",
+        limit: FREE_LIMITS.projects,
+        message:
+          "Free accounts can create up to " +
+          FREE_LIMITS.projects +
+          " projects. Upgrade to NERBERT Pro for unlimited projects."
+      });
+
     }
 
     const project =
