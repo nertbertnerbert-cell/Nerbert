@@ -110,120 +110,6 @@ button {
 
 <div class="app">
 
-<header class="topbar">
-  <div>
-    <h1>🤖 NERBERT AI</h1>
-    <p>Your personal AI assistant</p>
-  </div>
-  <button id="settingsButton">⚙️</button>
-</header>
-
-<section class="welcome">
-  <div>
-    <small>WELCOME BACK</small>
-    <h2>Hello, <span id="welcomeName">Nerbert</span> 👋</h2>
-    <p>What can I help you accomplish today?</p>
-  </div>
-</section>
-
-<section class="quick-actions">
-
-  <button class="action-card" onclick="focusChat()">
-    <span>💬</span>
-    <strong>New Chat</strong>
-    <small>Talk with NERBERT</small>
-  </button>
-
-  <button class="action-card" onclick="runTool('search')">
-    <span>🌐</span>
-    <strong>Web Search</strong>
-    <small>Find information</small>
-  </button>
-
-  <button class="action-card" onclick="runTool('weather')">
-    <span>🌦️</span>
-    <strong>Weather</strong>
-    <small>Check the weather</small>
-  </button>
-
-  <button class="action-card" onclick="runTool('memory')">
-    <span>🧠</span>
-    <strong>Memory</strong>
-    <small>Your saved information</small>
-  </button>
-
-</section>
-
-<section class="recent-section">
-  <div class="section-title">
-    <h3>Recent Activity</h3>
-    <button onclick="clearRecent()">Clear</button>
-  </div>
-
-  <div id="recentActivity">
-    <div class="empty-state">
-      <span>✨</span>
-      <p>Your recent conversations will appear here.</p>
-    </div>
-  </div>
-</section>
-
-<div id="messages"></div>
-
-<div class="status">
-  <span class="status-dot"></span>
-  🧠 Memory: ONLINE
-</div>
-
-<div class="input-area">
-
-  <button id="voiceButton">🎤</button>
-
-  <input
-    id="messageInput"
-    type="text"
-    placeholder="Talk to NERBERT..."
-    autocomplete="off"
-  >
-
-  <button id="sendButton">➤</button>
-
-</div>
-
-<nav class="bottom-nav">
-
-  <button class="active" onclick="focusChat()">
-    <span>💬</span>
-    <small>Chat</small>
-  </button>
-
-  <button onclick="runTool('search')">
-    <span>🌐</span>
-    <small>Search</small>
-  </button>
-
-  <button onclick="runTool('memory')">
-    <span>🧠</span>
-    <small>Memory</small>
-  </button>
-
-  <button onclick="runTool('projects')">
-    <span>📁</span>
-    <small>Projects</small>
-  </button>
-
-  <button onclick="openSettings()">
-    <span>⚙️</span>
-    <small>Settings</small>
-  </button>
-
-</nav>
-
-<script>
-
-
-<div class="app">
-
   <header class="topbar">
     <div class="brand">
       <div class="brand-icon">N</div>
@@ -533,6 +419,8 @@ const messages = document.getElementById("messages");
 const sendButton = document.getElementById("sendButton");
 const voiceButton = document.getElementById("voiceButton");
 
+const API_BASE = "http://127.0.0.1:3000";
+
 let userProfile = {
   name: "User"
 };
@@ -575,23 +463,6 @@ function runTool(tool) {
   }
 }
 
-
-function openSettings() {
-
-  const name =
-    userProfile.name || "User";
-
-  addMessage(
-    "⚙️ Settings\n\n" +
-    "👤 Profile: " + name + "\n" +
-    "🧠 Memory: Online\n" +
-    "🌐 Web Search: Online\n" +
-    "🌦️ Weather: Online\n" +
-    "🤖 AI Mode: Local Mode",
-    "bot"
-  );
-
-}
 
 function clearRecent() {
 
@@ -792,8 +663,6 @@ async function sendMessage() {
   messages.appendChild(thinking);
 
   const lower = text.toLowerCase();
-
-  const API_BASE = "http://127.0.0.1:3000";
 
   try {
 
