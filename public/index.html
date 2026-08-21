@@ -322,6 +322,8 @@ async function sendMessage() {
 
   const lower = text.toLowerCase();
 
+  const API_BASE = "http://127.0.0.1:3000";
+
   try {
 
     /* 🌐 WEB SEARCH */
@@ -392,8 +394,6 @@ async function sendMessage() {
 
       return;
     }
-
-    const API_BASE = "http://127.0.0.1:3000";
 
     /* 🌦️ WEATHER */
 
