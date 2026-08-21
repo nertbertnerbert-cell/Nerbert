@@ -326,6 +326,7 @@ async function loadProjects() {
 }
 
 async function createNewProject() {
+
   const name = prompt("Project name:");
 
   if (!name || !name.trim()) {
@@ -336,6 +337,7 @@ async function createNewProject() {
     prompt("Project description:") || "";
 
   try {
+
     const response = await fetch(
       API_BASE + "/api/projects",
       {
@@ -350,15 +352,94 @@ async function createNewProject() {
       }
     );
 
+    const data = await response.json();
+
+    if (response.status === 403 &&
+        data.code === "PRO_REQUIRED") {
+
+      showProjectUpgrade(data);
+      return;
+    }
+
     if (!response.ok) {
-      throw new Error("Project creation failed");
+      throw new Error(
+        data.error || "Project creation failed"
+      );
     }
 
     await loadProjects();
 
   } catch (error) {
-    alert("Could not create project.");
+
+    console.error(
+      "Project creation error:",
+      error
+    );
+
+    alert(
+      "Could not create project."
+    );
   }
+}
+
+
+function showProjectUpgrade(data) {
+
+  const overlay =
+    document.getElementById("overlay");
+
+  const panel =
+    document.getElementById("panel");
+
+  const limit =
+    data?.limit || 3;
+
+  panel.innerHTML = `
+    <div class="panel-header">
+      <h2>⭐ NERBERT Pro</h2>
+      <button onclick="hidePanel()">✕</button>
+    </div>
+
+    <div class="pro-hero">
+
+      <div class="pro-icon">📁</div>
+
+      <h3>You've reached the Free limit</h3>
+
+      <p>
+        Free accounts can create up to
+        ${limit} projects.
+      </p>
+
+      <p>
+        Upgrade to NERBERT Pro for
+        unlimited projects.
+      </p>
+
+    </div>
+
+    <div class="panel-item">
+      <strong>🚀 Unlimited Projects</strong>
+      <p>
+        Keep all your ideas, applications,
+        stories and work organized in NERBERT.
+      </p>
+    </div>
+
+    <button
+      class="primary-button"
+      onclick="hidePanel(); showUpgrade()">
+      ⭐ Upgrade to Pro
+    </button>
+
+    <button
+      class="clear-button"
+      onclick="hidePanel()">
+      Continue with Free
+    </button>
+  `;
+
+  overlay.classList.add("active");
 }
 
 
